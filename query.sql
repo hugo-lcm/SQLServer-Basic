@@ -16,3 +16,7 @@ select top 1 sql_variant_property(fun_nome + ' ' + fun_sobrenome + ' ' + cast(is
 select concat(fun_nome, ' ', fun_sobrenome) as nome_completo, fun_data_nascimento from FUN_FUNCIONARIOS where year(fun_data_nascimento) = 1985 or month(fun_data_nascimento) = 02;
 -- consultar funcionarios com mais de 26 anos
 select concat(fun_nome, ' ', fun_sobrenome) as nome_completo, fun_data_nascimento from FUN_FUNCIONARIOS where datediff(year, fun_data_nascimento, getdate()) >= 26;
+
+-- 7.5 consultas com campos null
+select * from FUN_FUNCIONARIOS where fun_observacoes is null;
+select * from FUN_FUNCIONARIOS where fun_observacoes is not null;

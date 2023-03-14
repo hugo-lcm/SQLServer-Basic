@@ -20,3 +20,6 @@ select concat(fun_nome, ' ', fun_sobrenome) as nome_completo, fun_data_nasciment
 -- 7.5 consultas com campos null
 select * from FUN_FUNCIONARIOS where fun_observacoes is null;
 select * from FUN_FUNCIONARIOS where fun_observacoes is not null;
+
+-- 7.7 adicionando novas colunas
+alter table FUN_FUNCIONARIOS add fun_cpf char(11) not null default '-';

@@ -23,3 +23,8 @@ select * from FUN_FUNCIONARIOS where fun_observacoes is not null;
 
 -- 7.7 adicionando novas colunas
 alter table FUN_FUNCIONARIOS add fun_cpf char(11) not null default '-';
+
+-- 7.8 atualizando dados das tabelas
+update FUN_FUNCIONARIOS set fun_cpf = '12345678912', fun_data_nascimento = '1990-02-23' where fun_id = 1;
+update FUN_FUNCIONARIOS set fun_cpf = '98765432100' where fun_id = 3;
+update FUN_FUNCIONARIOS set fun_cpf = '42857193191' where fun_id = 4;

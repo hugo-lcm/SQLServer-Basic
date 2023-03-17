@@ -32,3 +32,12 @@ update FUN_FUNCIONARIOS set fun_cpf = '42857193191' where fun_id = 4;
 -- 7.9 criando constraints do tipo unique
 alter table FUN_FUNCIONARIOS add constraint uc__fun_funcionarios_fun_cpf unique nonclustered (fun_cpf);
 insert into FUN_FUNCIONARIOS(fun_nome, fun_sobrenome, fun_data_nascimento, fun_cpf) values('teste', 'unique', '2000-01-01', '12345678912'); -- erro
+
+-- 7.10 criando tabelas através de comandos
+	create table PAC_PONTOS_ACESSO
+(
+	pac_id int identity(1,1) primary key,
+	pac_data_inicial datetime not null,
+	pac_data_final datetime default null,
+	fun_id int not null
+);

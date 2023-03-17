@@ -41,3 +41,9 @@ insert into FUN_FUNCIONARIOS(fun_nome, fun_sobrenome, fun_data_nascimento, fun_c
 	pac_data_final datetime default null,
 	fun_id int not null
 );
+
+-- 7.11 criando foreign keys através de comandos
+alter table PAC_PONTOS_ACESSO add constraint fk__pac_pontos_acesso_fun_funcionarios_fun_id 
+foreign key(fun_id) references FUN_FUNCIONARIOS(fun_id);
+
+insert into PAC_PONTOS_ACESSO(pac_data_inicial, fun_id) values ('2023-01-01 07:00:00', 1);

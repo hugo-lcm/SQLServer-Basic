@@ -47,3 +47,27 @@ alter table PAC_PONTOS_ACESSO add constraint fk__pac_pontos_acesso_fun_funcionar
 foreign key(fun_id) references FUN_FUNCIONARIOS(fun_id);
 
 insert into PAC_PONTOS_ACESSO(pac_data_inicial, fun_id) values ('2023-01-01 07:00:00', 1);
+
+-- 7.12 criando constraints do tipo CHECK
+/*alter table PAC_PONTOS_ACESSO add constraint ck_pac_pontos_acesso__data_inicial_data_final
+check
+(
+	pac_data_inicial < pac_data_final and
+	datepart(day, pac_data_inicial) = datepart(day, pac_data_final) and
+	datepart(month, pac_data_inicial) = datepart(month, pac_data_final) and
+	datepart(year, pac_data_inicial) = datepart(year, pac_data_inicial)
+); 
+datepart é uma função não determinística, por isso não é bom usá-la*/
+
+alter table PAC_PONTOS_ACESSO drop ck_pac_pontos_acesso__data_inicial_data_final;
+
+alter table PAC_PONTOS_ACESSO add constraint ck_pac_pontos_acesso__data_inicial_data_final
+check
+(
+	pac_data_inicial < pac_data_final and
+	day(pac_data_inicial) = day(pac_data_final) and
+	month(pac_data_inicial) = month(pac_data_final) and
+	year(pac_data_inicial) = year(pac_data_inicial)
+);
+
+update PAC_PONTOS_ACESSO set pac_data_final = '2023-01-01 06:00:00' where pac_id = 1; -- erro

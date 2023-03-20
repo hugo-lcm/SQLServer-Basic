@@ -71,3 +71,9 @@ check
 );
 
 update PAC_PONTOS_ACESSO set pac_data_final = '2023-01-01 06:00:00' where pac_id = 1; -- erro
+
+-- 7.13 cast vs convert
+-- em termos de performance não há diferença, a diferença entre eles é que convert é exclusivo do tsql
+select *, cast(pac_data_final - pac_data_inicial as time(0)) as diferenca_datas from PAC_PONTOS_ACESSO;
+
+select *, convert(time(0), pac_data_final - pac_data_inicial) as diferenca_datas from PAC_PONTOS_ACESSO;

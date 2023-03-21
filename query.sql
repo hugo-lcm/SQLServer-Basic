@@ -77,3 +77,12 @@ update PAC_PONTOS_ACESSO set pac_data_final = '2023-01-01 06:00:00' where pac_id
 select *, cast(pac_data_final - pac_data_inicial as time(0)) as diferenca_datas from PAC_PONTOS_ACESSO;
 
 select *, convert(time(0), pac_data_final - pac_data_inicial) as diferenca_datas from PAC_PONTOS_ACESSO;
+
+-- 8.1 consultas com dados de várias tabelas
+select concat(f.fun_sobrenome, ', ', f.fun_nome) as nome_funcionario,
+	f.fun_data_nascimento, 
+	p.pac_data_inicial, 
+	p.pac_data_final,
+	convert(time(0), p.pac_data_final - p.pac_data_inicial) as horas_trabalhadas
+from FUN_FUNCIONARIOS f, PAC_PONTOS_ACESSO p
+where f.fun_id = p.fun_id;

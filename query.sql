@@ -97,3 +97,13 @@ select concat(f.fun_sobrenome, ', ', f.fun_nome) as nome_funcionario,
 	convert(time(0), p.pac_data_final - p.pac_data_inicial) as horas_trabalhadas
 from FUN_FUNCIONARIOS f join PAC_PONTOS_ACESSO p
 on(f.fun_id = p.fun_id);
+
+-- 8.3 left join
+select concat(f.fun_sobrenome, ', ', f.fun_nome) as nome_funcionario,
+	f.fun_data_nascimento, 
+	p.pac_data_inicial, 
+	p.pac_data_final,
+	convert(time(0), p.pac_data_final - p.pac_data_inicial) as horas_trabalhadas
+from FUN_FUNCIONARIOS f left join PAC_PONTOS_ACESSO p
+on(f.fun_id = p.fun_id)
+where p.pac_data_final is null;

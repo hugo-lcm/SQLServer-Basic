@@ -86,3 +86,14 @@ select concat(f.fun_sobrenome, ', ', f.fun_nome) as nome_funcionario,
 	convert(time(0), p.pac_data_final - p.pac_data_inicial) as horas_trabalhadas
 from FUN_FUNCIONARIOS f, PAC_PONTOS_ACESSO p
 where f.fun_id = p.fun_id;
+
+-- 8.2 inner join
+insert into PAC_PONTOS_ACESSO(pac_data_inicial, pac_data_final, fun_id) values ('2023-02-01 07:00:00', '2023-02-01 11:57:00', 3);
+
+select concat(f.fun_sobrenome, ', ', f.fun_nome) as nome_funcionario,
+	f.fun_data_nascimento, 
+	p.pac_data_inicial, 
+	p.pac_data_final,
+	convert(time(0), p.pac_data_final - p.pac_data_inicial) as horas_trabalhadas
+from FUN_FUNCIONARIOS f join PAC_PONTOS_ACESSO p
+on(f.fun_id = p.fun_id);

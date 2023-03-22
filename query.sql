@@ -165,3 +165,136 @@ inner join DEP_DEPARTAMENTOS d
 	on f.dep_id = d.dep_id
 inner join FUN_FUNCIONARIOS f2
 	on d.fun_id_responsavel = f2.fun_id;
+
+-- 9 funções 
+/*funções escalares: que retornam apenas um valor.
+para cadeia de caracteres, as mais comuns são:
+CONCAT: Agrupa duas ou mais cadeias de caracteres. Sua sintaxe é:
+	CONCAT(string1, string2 ... stringN);
+
+LOWER: Converte todos os caracteres para minúsculo. Sua sintaxe é:
+	UPPER(string);
+
+REPLACE: Substitui todas as ocorrências de uma sequência de caracteres por outra. Sua sintaxe é:
+	REPLACE(string_original, string_a_trocar, string_nova);
+
+SUBSTRING: Retorna parte de uma cadeia de caracteres definida. Sua sintaxe é:
+	SUBSTRING('string_original', 'posicao', 'tamanho');
+
+funções escalares matemáticas mais usadas:
+ABS: Retorna o valor positivo absoluto do valor de entrada. Sua sintaxe é:
+	ABS(valor);
+
+LOG10: Retorna o logaritmo da base 10 do valor de entrada. Sua sintaxe é:
+	LOG10(valor);
+
+PI Retorna o valor da constante PI. Sua sintaxe é:
+	PI();
+
+RAND: Retorna um número aleatório entre 0 e 1. Se for informado um valor no seu parâmetro, o 
+número gerado deixará de ser aleatório, repetindo sempre que o mesmo parâmetro for informado. Sua sintaxe é:
+	RAND([valor]);
+
+mais ultilizadas para trabalhar com data e hora:
+SYSDATETIME: Retorna data e hora no formato datetime2(7) do computador onde o banco de dados está instalado:
+	SYSDATETIME();
+
+CURRENT_TIMESTAMP: Retorna o timestamp do computador onde o banco de dados está instalado:
+	CURRENT_TIMESTAMP();
+
+DATEFROMPARTS: Retorna uma data a partir dos parâmetros passados. Sua sintaxe é:
+	DATEFROMPARTS(ano, mes, dia);
+
+DATEDIFF: Retorna a diferença entre duas datas. Veja sua sintaxe:
+	DATEDIFF(unidade_retorno, data_inicial, data_final);
+	A unidade de retorno pode ser: Year- Anos; Quarter – Trimestres;Month – Meses; Dayofyear – Dias do Ano;
+									Day – Dias; Week – Semanas; Hour – Horas; Minute – Minutos; Second – Segundos;
+									Millisecond – milissegundos; Microsecond – Microssegundos; Nanosecond – Nanossegundos.
+
+outras funções de uso diverso:
+HOST_NAME: Retorna o nome da estação que está executando.
+DB_NAME: Retorna o banco de dados que está conectado agora.
+SYSTEM_USER: Retorna o usuário conectado.
+CAST: Realiza a conversão entre tipos de dados. Sua sintaxe é:
+	CAST (valor AS tipo_dados [(tamanho)]); --tamanho é opcional
+
+funções de agregação ou sumarizadores: realizam ações sobre um conjunto de valores e retornam apenas um valor como resultado. 
+Este valor único retornado geralmente corresponde a um cálculo matemático realizado em cima das tuplas especificadas.
+as mais utilizadas são:
+MIN: Retorna o menor valor;
+MAX: Retorna o maior valor;
+SUM: Calcula a soma de todos os valores;
+AVG: Calcula a média de todos os valores;
+COUNT: Retorna o número de itens.
+
+criação de funções:
+CREATE FUNCTION nome_função (@parametro tipo, @parametro2 tipo2, ... @parametroN tipoN)
+RETURNS tipo_retorno
+BEGIN
+  Comando1
+  Comando2
+  ComandoN
+END
+
+declarar e setar variáveis:
+DECLARE @nome_variavel tipo_dado (sim, precisa do @ na frente do nome)
+SET @nome_variavel = valor
+
+estruturas condicioanis:
+IF Expressão booleana
+BEGIN
+
+  Comando caso a condição seja verdadeira
+
+  Comando2 caso a condição seja verdadeira
+
+  Comando3 caso a condição seja verdadeira
+
+END
+ELSE
+BEGIN
+  Comando caso a condição seja falsa
+
+  Comando2 caso a condição seja falsa
+
+  Comando3 caso a condição seja falsa
+END
+
+exemplo:
+DECLARE @nacionalidade varchar(50))
+DECLARE @resultado varchar(50)
+SET @nacionalidade = 'Brasileiro'
+IF @nacionalidade = 'Brasileiro'
+BEGIN
+  SET @resultado = 'Você é brasileiro '
+  SET @resultado = CONCAT('Parabéns ', @resultado)
+END
+ELSE
+BEGIN
+  SET @resultado = 'Você não é brasileiro'
+  SET @resultado = CONCAT('Que Pena! ', @resultado)
+END
+
+estruturas de repetição:
+WHILE Teste
+BEGIN
+Comando1
+Comando2
+...
+ComandoN
+END
+
+exemplo:
+DECLARE @resultado varchar(max), @contador int
+SET @contador = 0
+SET @resultado = ''
+
+WHILE @contador <= 10
+BEGIN
+  SET @resultado = CONCAT(@resultado, @contador, ', ')
+  SET @contador = @contador + 1;
+END
+
+apagando user functions:
+DROP FUNCTION função1, função2, ... funçãoN;
+*/

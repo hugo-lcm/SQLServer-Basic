@@ -150,3 +150,18 @@ foreign key(fun_id_responsavel) references fun_funcionarios(fun_id);
 
 update DEP_DEPARTAMENTOS set fun_id_responsavel = 3 where dep_id = 2;
 update DEP_DEPARTAMENTOS set fun_id_responsavel = 4 where dep_id = 3;
+
+-- 8.8 relacionamentos pt.3
+select d.dep_nome as departamento,
+	concat(f2.fun_sobrenome, ', ', f2.fun_nome) as repsonsavel_departamento,
+	concat(f.fun_sobrenome, ', ', f.fun_nome) as funcionario,
+	p.pac_data_inicial,
+	p.pac_data_final,
+	convert(time(0), p.pac_data_final - p.pac_data_inicial) as horas_trabalhadas
+from FUN_FUNCIONARIOS f
+left join PAC_PONTOS_ACESSO p
+	on f.fun_id = p.fun_id
+inner join DEP_DEPARTAMENTOS d
+	on f.dep_id = d.dep_id
+inner join FUN_FUNCIONARIOS f2
+	on d.fun_id_responsavel = f2.fun_id;

@@ -117,3 +117,24 @@ select concat(f.fun_sobrenome, ', ', f.fun_nome) as nome_funcionario,
 from FUN_FUNCIONARIOS f right join PAC_PONTOS_ACESSO p
 on(f.fun_id = p.fun_id)
 where p.pac_data_final is null;
+
+-- 8.6 relacionamentos pt.1
+create table DEP_DEPARTAMENTOS
+(
+	dep_id int identity(1, 1) primary key,
+	dep_nome varchar(50) not null
+);
+
+insert into DEP_DEPARTAMENTOS(dep_nome) values('recursos humanos'), ('tecnologia de informação'), ('controladoria');
+
+select * from DEP_DEPARTAMENTOS;
+
+alter table FUN_FUNCIONARIOS add dep_id int not null default 1;
+
+select * from FUN_FUNCIONARIOS;
+
+alter table FUN_FUNCIONARIOS add constraint fk_fun_funcionarios__dep_departamentos__dep_id 
+foreign key(dep_id) references DEP_DEPARTAMENTOS(dep_id);
+
+update FUN_FUNCIONARIOS set dep_id = 2 where fun_id = 3;
+update FUN_FUNCIONARIOS set dep_id = 3 where fun_id = 4;

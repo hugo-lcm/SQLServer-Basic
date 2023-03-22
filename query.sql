@@ -138,3 +138,15 @@ foreign key(dep_id) references DEP_DEPARTAMENTOS(dep_id);
 
 update FUN_FUNCIONARIOS set dep_id = 2 where fun_id = 3;
 update FUN_FUNCIONARIOS set dep_id = 3 where fun_id = 4;
+
+-- 8.7 relacionamentos pt.2
+alter table DEP_DEPARTAMENTOS add fun_id_responsavel int not null default 1;
+
+select * from DEP_DEPARTAMENTOS;
+select * from FUN_FUNCIONARIOS;
+
+alter table DEP_DEPARTAMENTOS add constraint fk_dep_departamentos__fun_funcionarios__fun_id_responsavel
+foreign key(fun_id_responsavel) references fun_funcionarios(fun_id);
+
+update DEP_DEPARTAMENTOS set fun_id_responsavel = 3 where dep_id = 2;
+update DEP_DEPARTAMENTOS set fun_id_responsavel = 4 where dep_id = 3;

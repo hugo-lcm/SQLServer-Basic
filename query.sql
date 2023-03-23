@@ -298,3 +298,10 @@ END
 apagando user functions:
 DROP FUNCTION função1, função2, ... funçãoN;
 */
+
+-- 9.1 funções de agregação pt.1
+select count(*) from FUN_FUNCIONARIOS;
+select count(convert(varchar, fun_observacoes)) from FUN_FUNCIONARIOS;
+select min(fun_data_nascimento) from FUN_FUNCIONARIOS;
+select max(fun_data_nascimento) from FUN_FUNCIONARIOS;
+select fun_nome, fun_sobrenome, fun_data_nascimento from FUN_FUNCIONARIOS where fun_data_nascimento = (select max(fun_data_nascimento) from FUN_FUNCIONARIOS);

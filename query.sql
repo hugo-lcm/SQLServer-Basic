@@ -305,3 +305,10 @@ select count(convert(varchar, fun_observacoes)) from FUN_FUNCIONARIOS;
 select min(fun_data_nascimento) from FUN_FUNCIONARIOS;
 select max(fun_data_nascimento) from FUN_FUNCIONARIOS;
 select fun_nome, fun_sobrenome, fun_data_nascimento from FUN_FUNCIONARIOS where fun_data_nascimento = (select max(fun_data_nascimento) from FUN_FUNCIONARIOS);
+
+-- 9.2 funções de agragação pt.2
+select d.dep_nome, count(*) as qtd_funcionarios
+from DEP_DEPARTAMENTOS d
+join FUN_FUNCIONARIOS f
+on d.dep_id = f.dep_id
+group by d.dep_nome;

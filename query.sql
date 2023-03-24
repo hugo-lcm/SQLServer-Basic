@@ -312,3 +312,18 @@ from DEP_DEPARTAMENTOS d
 join FUN_FUNCIONARIOS f
 on d.dep_id = f.dep_id
 group by d.dep_nome;
+
+-- 9.3 funções de agregação pt.3
+alter table FUN_FUNCIONARIOS add fun_salario money not null default 0;
+select * from FUN_FUNCIONARIOS;
+update FUN_FUNCIONARIOS set fun_salario = 1000 where fun_id = 1;
+update FUN_FUNCIONARIOS set fun_salario = 1700 where fun_id = 3;
+update FUN_FUNCIONARIOS set fun_salario = 5000 where fun_id = 4;
+
+select sum(fun_salario) as folha_salarial from FUN_FUNCIONARIOS;
+
+select d.dep_nome, sum(f.fun_salario) as folha_salarial, avg(f.fun_salario) as media_salarial
+from DEP_DEPARTAMENTOS d
+join FUN_FUNCIONARIOS f
+on d.dep_id = f.dep_id
+group by d.dep_nome;

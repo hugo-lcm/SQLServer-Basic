@@ -350,3 +350,38 @@ join FUN_FUNCIONARIOS f
 	on f.fun_id = dados_ponto.fun_id
 group by dados_ponto.data, concat(f.fun_sobrenome, ', ', f.fun_nome)
 order by dados_ponto.data;
+
+-- 9.5 common table expressions (cte)
+with dados_ponto(diferenca_segundos, data, fun_id) as
+(
+	select datediff(second, pac_data_inicial, pac_data_final) as diferenca_segundos,
+		   convert(date, pac_data_inicial) as data,
+		   fun_id
+		from PAC_PONTOS_ACESSO
+)
+
+select dados_ponto.data,
+       concat(f.fun_sobrenome, ', ', f.fun_nome) as nome_funcionario,
+	   (
+		  format(sum(dados_ponto.diferenca_segundos)/3600, '00') + ':' + 
+		  format((sum(dados_ponto.diferenca_segundos)%3600)/60, '00') + ':' +
+		  format(((sum(dados_ponto.diferenca_segundos)%3600)%60), '00')
+	   ) as horas_trabalhadas
+from dados_ponto
+join FUN_FUNCIONARIOS f
+	on f.fun_id = dados_ponto.fun_id
+group by dados_ponto.data, concat(f.fun_sobrenome, ', ', f.fun_nome)
+order by dados_ponto.data;
+
+with dados_ponto(diferenca_segundos, data, fun_id) as
+(
+	select datediff(second, pac_data_inicial, pac_data_final) as diferenca_segundos,
+		   convert(date, pac_data_inicial) as data,
+		   fun_id
+		from PAC_PONTOS_ACESSO
+)
+
+select fun_id, diferenca_segundos
+from dados_ponto
+where diferenca_segundos in (select min(diferenca_segundos) from dados_ponto) or
+diferenca_segundos in (select max(diferenca_segundos) from dados_ponto);

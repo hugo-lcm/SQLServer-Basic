@@ -423,3 +423,22 @@ begin
 end;
 
 --drop function fn_calcula_hora;
+
+-- 9.7 criando funções pt.2
+create function fn_dados_ponto()
+returns table as
+return select datediff(second, pac_data_inicial, pac_data_final) as diferenca_segundos,
+			  convert(date, pac_data_inicial) as data,
+			  fun_id
+		from PAC_PONTOS_ACESSO;
+
+select * from dbo.fn_dados_ponto();
+
+select dados_ponto.data,
+	   concat(f.fun_sobrenome, ', ', f.fun_nome) as nome_completo,
+	   dbo.fn_calcula_hora(sum(dados_ponto.diferenca_segundos)) as horas_trabalhadas
+from dbo.fn_dados_ponto() as dados_ponto
+join fun_funcionarios f
+	on f.fun_id = dados_ponto.fun_id
+group by dados_ponto.data, concat(f.fun_sobrenome, ', ', f.fun_nome)
+order by dados_ponto.data;

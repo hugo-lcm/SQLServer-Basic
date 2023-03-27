@@ -385,3 +385,41 @@ select fun_id, diferenca_segundos
 from dados_ponto
 where diferenca_segundos in (select min(diferenca_segundos) from dados_ponto) or
 diferenca_segundos in (select max(diferenca_segundos) from dados_ponto);
+
+-- 9.6 criando funções pt.1
+create function fn_calcula_hora(@p_qtde_segundos int)
+returns varchar(8) as
+begin
+	return format(@p_qtde_segundos/3600, '00') + ':' +
+		   format((@p_qtde_segundos%3600)/60, '00') + ':' +
+		   format(((@p_qtde_segundos%3600)/60), '00')
+end;
+
+with dados_ponto(diferenca_segundos, data, fun_id) as
+(
+	select datediff(second, pac_data_inicial, pac_data_final) as diferenca_segundos,
+	       convert(date, pac_data_inicial) as data,
+		   fun_id
+		from PAC_PONTOS_ACESSO
+)
+
+select dados_ponto.data,
+	   concat(f.fun_sobrenome, ', ', f.fun_nome) as nome_funcionario,
+	   dbo.fn_calcula_hora(sum(dados_ponto.diferenca_segundos)) as horas_trabalhadas
+from dados_ponto
+join FUN_FUNCIONARIOS f
+	on f.fun_id = dados_ponto.fun_id
+group by dados_ponto.data, concat(f.fun_sobrenome, ', ', f.fun_nome)
+order by dados_ponto.data;
+
+alter function fn_calcula_hora(@p_qtde_segundos int)
+returns varchar(8) as
+begin
+	declare @resultado varchar(8);
+	set @resultado = format(@p_qtde_segundos/3600, '00') + ':';
+	set @resultado = @resultado + format((@p_qtde_segundos%3600)/60, '00') + ':';
+	set @resultado = @resultado + format(((@p_qtde_segundos%3600)%60), '00');
+	return @resultado;
+end;
+
+--drop function fn_calcula_hora;

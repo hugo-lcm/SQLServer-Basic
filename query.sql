@@ -327,3 +327,26 @@ from DEP_DEPARTAMENTOS d
 join FUN_FUNCIONARIOS f
 on d.dep_id = f.dep_id
 group by d.dep_nome;
+
+-- 9.4 funções de agregação pt.4
+insert into PAC_PONTOS_ACESSO(pac_data_inicial, pac_data_final, fun_id) values ('2023-01-01 13:02:00', '2023-01-01 17:07:00', 1);
+insert into PAC_PONTOS_ACESSO(pac_data_inicial, pac_data_final, fun_id) values ('2023-01-02 07:03:00', '2023-01-02 12:20:00', 1);
+
+select dados_ponto.data,
+       concat(f.fun_sobrenome, ', ', f.fun_nome) as nome_funcionario,
+	   (
+		  format(sum(dados_ponto.diferenca_segundos)/3600, '00') + ':' + 
+		  format((sum(dados_ponto.diferenca_segundos)%3600)/60, '00') + ':' +
+		  format(((sum(dados_ponto.diferenca_segundos)%3600)%60), '00')
+	   ) as horas_trabalhadas
+from
+(
+	select datediff(second, pac_data_inicial, pac_data_final) as diferenca_segundos,
+		   convert(date, pac_data_inicial) as data,
+		   fun_id
+		from PAC_PONTOS_ACESSO
+) as dados_ponto
+join FUN_FUNCIONARIOS f
+	on f.fun_id = dados_ponto.fun_id
+group by dados_ponto.data, concat(f.fun_sobrenome, ', ', f.fun_nome)
+order by dados_ponto.data;

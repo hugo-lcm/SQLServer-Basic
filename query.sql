@@ -442,3 +442,43 @@ join fun_funcionarios f
 	on f.fun_id = dados_ponto.fun_id
 group by dados_ponto.data, concat(f.fun_sobrenome, ', ', f.fun_nome)
 order by dados_ponto.data;
+
+-- 9.8 criando funções pt.3
+drop function fn_dados_ponto;
+create function fn_dados_ponto(@p_fun_id int = null)
+returns @resultado table
+(
+	diferenca_segundos int,
+	data date,
+	fun_id int
+)
+as
+begin
+	if @p_fun_id is null
+	begin
+		insert into @resultado select datediff(second, pac_data_inicial, pac_data_final) as diferenca_segundos,
+							          convert(date, pac_data_inicial) as data,
+									  fun_id
+									from PAC_PONTOS_ACESSO;
+	end
+	else
+	begin
+		insert into @resultado select datediff(second, pac_data_inicial, pac_data_final) as diferenca_segundos,
+							          convert(date, pac_data_inicial) as data,
+									  fun_id
+									from PAC_PONTOS_ACESSO
+									where fun_id = @p_fun_id;
+	end
+	return;
+end;
+
+select * from dbo.fn_dados_ponto(1);
+
+select dados_ponto.data,
+	   concat(f.fun_sobrenome, ', ', f.fun_nome) as nome_funcionario,
+	   dbo.fn_calcula_hora(sum(dados_ponto.diferenca_segundos)) as horas_trabalhadas
+from dbo.fn_dados_ponto(default) as dados_ponto
+join fun_funcionarios f
+	on f.fun_id = dados_ponto.fun_id
+group by dados_ponto.data, concat(f.fun_sobrenome, ', ', f.fun_nome)
+order by dados_ponto.data;

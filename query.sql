@@ -482,3 +482,14 @@ join fun_funcionarios f
 	on f.fun_id = dados_ponto.fun_id
 group by dados_ponto.data, concat(f.fun_sobrenome, ', ', f.fun_nome)
 order by dados_ponto.data;
+
+-- 10 views
+-- o comando usado para criar uma view é o CREATE VIEW. Sua sintaxe mais básica é a seguinte:
+CREATE VIEW nome_view AS consulta;
+-- sendo que consulta pode ser qualquer pesquisa utilizando SELECT. Por exemplo:
+CREATE VIEW carros_antigos AS
+SELECT * FROM carro WHERE ano_fabricacao < 2013;
+-- o processo para alterar uma view é muito parecido com o processo de criação, pois todas as partes do comando de criação devem ser reescritas:
+ALTER VIEW nome_view AS consulta;
+-- o comando usado para excluir uma view é muito simples também:
+DROP VIEW nome_view;

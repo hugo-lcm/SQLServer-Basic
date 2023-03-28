@@ -493,3 +493,15 @@ SELECT * FROM carro WHERE ano_fabricacao < 2013;
 ALTER VIEW nome_view AS consulta;
 -- o comando usado para excluir uma view é muito simples também:
 DROP VIEW nome_view;
+
+-- 10.1 criando uma view
+create view vw_ponto_funcionarios as
+select dados_ponto.data,
+	   concat(f.fun_sobrenome, ', ', f.fun_nome) as nome_funcionario,
+	   dbo.fn_calcula_hora(sum(dados_ponto.diferenca_segundos)) as horas_trabalhadas
+from dbo.fn_dados_ponto(default) as dados_ponto
+join FUN_FUNCIONARIOS f
+	on f.fun_id = dados_ponto.fun_id
+group by dados_ponto.data, concat(f.fun_sobrenome, ', ', f.fun_nome);
+
+select * from vw_ponto_funcionarios order by data;

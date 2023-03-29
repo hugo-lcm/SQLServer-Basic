@@ -524,3 +524,37 @@ comando 2
 comando n
 /*dentro do bloco de comandos da procedure, podemos utilizar todos recursos que vimos para funções: variáveis, condicionais e estruturas de 
 repetição; além de poder executar comandos DDL e DML.*/
+
+-- 11.1 criando stored procedures
+create or alter procedure spe_registrar_ponto_acesso @p_fun_id int, @p_data datetime
+as
+begin
+	set nocount on;
+	declare @qtde_pontos_abertos int;
+	select @qtde_pontos_abertos = count(*)
+		from PAC_PONTOS_ACESSO
+	where fun_id = @p_fun_id
+		and pac_data_final is null;
+	if @qtde_pontos_abertos = 0
+	begin
+		-- NOVO PONTO
+		insert into PAC_PONTOS_ACESSO(pac_data_inicial, fun_id)
+			values(@p_data, @p_fun_id);
+	end
+	else
+	begin
+		-- ATUALIZAR PONTO ABERTO
+		update PAC_PONTOS_ACESSO
+			set pac_data_final = @p_data
+		where fun_id = @p_fun_id
+			and pac_data_final is null;
+	end
+	set nocount off;
+end;
+
+execute dbo.spe_registrar_ponto_acesso 1, '2023-01-03 07:00:00';
+execute dbo.spe_registrar_ponto_acesso 1, '2023-01-03 12:00:00';
+execute dbo.spe_registrar_ponto_acesso 1, '2023-01-03 13:00:00';
+execute dbo.spe_registrar_ponto_acesso 1, '2023-01-03 17:00:00';
+select * from PAC_PONTOS_ACESSO;
+select * from vw_ponto_funcionarios;

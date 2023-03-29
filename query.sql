@@ -505,3 +505,22 @@ join FUN_FUNCIONARIOS f
 group by dados_ponto.data, concat(f.fun_sobrenome, ', ', f.fun_nome);
 
 select * from vw_ponto_funcionarios order by data;
+
+-- 11 stored procedures
+/*conjunto de instruções que ficam armazenados pré-compilados no servidor e agrupados por um nome, assim como as funções. Só que, diferente de 
+funções, as stored procedures não retornam valores. Outras diferenças entre funções e procedimentos são:
+	. funções não podem executar stored procedures. Mas procedimentos podem executar funções e outras stored procedures;
+	. procedures podem criar tabelas, inserir, excluir ou alterar seus dados. Já funções não podem executar nenhuma dessas ações.
+sintaxe para criar STORED PROCEDURES:*/
+CREATE PROCEDURE nome_do_stored_procedure
+[
+{@nome_parâmetro1 tipo_de_dados_do_parâmetro} [=valor_default] [OUTPUT]
+]
+[,..n]
+AS
+comando 1
+comando 2
+...
+comando n
+/*dentro do bloco de comandos da procedure, podemos utilizar todos recursos que vimos para funções: variáveis, condicionais e estruturas de 
+repetição; além de poder executar comandos DDL e DML.*/

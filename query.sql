@@ -558,3 +558,69 @@ execute dbo.spe_registrar_ponto_acesso 1, '2023-01-03 13:00:00';
 execute dbo.spe_registrar_ponto_acesso 1, '2023-01-03 17:00:00';
 select * from PAC_PONTOS_ACESSO;
 select * from vw_ponto_funcionarios;
+
+-- 11.2 tabelas temporárias, variáveis de tabela e cursor
+create table avs_avisos_funcionarios
+(
+	avs_id int identity(1,1) primary key,
+	avs_nome_funcionario varchar(20) not null,
+	avs_horas_trabalhadas char(8) not null,
+	avs_data_aviso date not null
+);
+
+create or alter procedure spe_notificar_horas_extras @p_data_refderencia date
+as
+begin
+	set nocount on;
+	declare cr_funcionarios cursor for
+		select data, nome_funcionario, horas_trabalhadas
+		from dbo.vw_ponto_funcionarios
+		where data = @p_data_refderencia;
+	if object_id(N'tempdb..#horas_extras') is null
+	begin
+		-- CRIAR TABELA TEMPORÁRIA
+		create table #horas_extras
+		(
+			nome_funcionario varchar(70),
+			data_evento date,
+			horas_trabalhadas char(8)
+		);
+	end
+	else
+	begin
+		-- LIMPAR A TABELA TEMPORÁRIA
+		delete from #horas_extras;
+	end
+	declare @data date;
+	declare @nome_funcionario varchar(70);
+	declare @horas_trabalhadas char(8);
+	declare @tempo_trabalhado int;
+	open cr_funcionarios;
+	fetch next from cr_funcionarios
+		into @data, @nome_funcionario, @horas_trabalhadas;
+	while @@fetch_status = 0
+	begin
+		set @tempo_trabalhado = datepart(second, convert(time(0), @horas_trabalhadas)) +
+								datepart(minute, convert(time(0), @horas_trabalhadas)) * 60 +
+								datepart(hour, convert(time(0), @horas_trabalhadas)) * 3600;
+		if @tempo_trabalhado > 8 * 60 * 60
+		begin
+			insert into #horas_extras(nome_funcionario, data_evento, horas_trabalhadas)
+				values(@nome_funcionario, @data, @horas_trabalhadas);
+		end
+		fetch next from cr_funcionarios
+			into @data, @nome_funcionario, @horas_trabalhadas;
+	end
+	close cr_funcionarios;
+	deallocate cr_funcionarios;
+	insert into avs_avisos_funcionarios(avs_nome_funcionario, avs_data_aviso, avs_horas_trabalhadas)
+		select nome_funcionario, data_evento, horas_trabalhadas from #horas_extras;
+	set nocount off;
+end;
+
+select * from vw_ponto_funcionarios;
+
+exec dbo.spe_notificar_horas_extras '2023-02-01';
+exec dbo.spe_notificar_horas_extras '2023-01-03';
+
+select * from avs_avisos_funcionarios;

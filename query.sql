@@ -560,7 +560,7 @@ select * from PAC_PONTOS_ACESSO;
 select * from vw_ponto_funcionarios;
 
 -- 11.2 tabelas temporárias, variáveis de tabela e cursor
-create table avs_avisos_funcionarios
+create table AVS_AVISOS_FUNCIONARIOS
 (
 	avs_id int identity(1,1) primary key,
 	avs_nome_funcionario varchar(20) not null,
@@ -613,7 +613,7 @@ begin
 	end
 	close cr_funcionarios;
 	deallocate cr_funcionarios;
-	insert into avs_avisos_funcionarios(avs_nome_funcionario, avs_data_aviso, avs_horas_trabalhadas)
+	insert into AVS_AVISOS_FUNCIONARIOS(avs_nome_funcionario, avs_data_aviso, avs_horas_trabalhadas)
 		select nome_funcionario, data_evento, horas_trabalhadas from #horas_extras;
 	set nocount off;
 end;
@@ -623,4 +623,4 @@ select * from vw_ponto_funcionarios;
 exec dbo.spe_notificar_horas_extras '2023-02-01';
 exec dbo.spe_notificar_horas_extras '2023-01-03';
 
-select * from avs_avisos_funcionarios;
+select * from AVS_AVISOS_FUNCIONARIOS;

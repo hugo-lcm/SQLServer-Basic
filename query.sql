@@ -559,7 +559,7 @@ execute dbo.spe_registrar_ponto_acesso 1, '2023-01-03 17:00:00';
 select * from PAC_PONTOS_ACESSO;
 select * from vw_ponto_funcionarios;
 
--- 11.2 tabelas temporárias, variáveis de tabela e cursor
+-- 11.2 stored procedures: tabelas temporárias, variáveis de tabela e cursor
 create table AVS_AVISOS_FUNCIONARIOS
 (
 	avs_id int identity(1,1) primary key,
@@ -624,3 +624,78 @@ exec dbo.spe_notificar_horas_extras '2023-02-01';
 exec dbo.spe_notificar_horas_extras '2023-01-03';
 
 select * from AVS_AVISOS_FUNCIONARIOS;
+
+-- 11.3 stored procedures: lançamento e tratamento de erros
+create or alter procedure spe_notificar_horas_extras @p_data_refderencia date, @qtde_eventos int output
+as
+begin
+	if eomonth(@p_data_refderencia) = @p_data_refderencia
+	begin;
+		-- raiserror('último do dia do mês não pode gerar avisos!', 11, 1);
+		throw 50000, 'último do dia do mês não pode gerar avisos!', 1;
+		print 'erro lançado';
+		-- raiserror nao impede a execução da sp, throw sim, por isso o print acima não é executado no throw
+	end
+	set nocount on;
+	declare cr_funcionarios cursor for
+		select data, nome_funcionario, horas_trabalhadas
+		from dbo.vw_ponto_funcionarios
+		where data = @p_data_refderencia;
+	if object_id(N'tempdb..#horas_extras') is null
+	begin
+		-- CRIAR TABELA TEMPORÁRIA
+		create table #horas_extras
+		(
+			nome_funcionario varchar(70),
+			data_evento date,
+			horas_trabalhadas char(8)
+		);
+	end
+	else
+	begin
+		-- LIMPAR A TABELA TEMPORÁRIA
+		delete from #horas_extras;
+	end
+	declare @data date;
+	declare @nome_funcionario varchar(70);
+	declare @horas_trabalhadas char(8);
+	declare @tempo_trabalhado int;
+	open cr_funcionarios;
+	fetch next from cr_funcionarios
+		into @data, @nome_funcionario, @horas_trabalhadas;
+	while @@fetch_status = 0
+	begin
+		set @tempo_trabalhado = datepart(second, convert(time(0), @horas_trabalhadas)) +
+								datepart(minute, convert(time(0), @horas_trabalhadas)) * 60 +
+								datepart(hour, convert(time(0), @horas_trabalhadas)) * 3600;
+		if @tempo_trabalhado > 8 * 60 * 60
+		begin
+			insert into #horas_extras(nome_funcionario, data_evento, horas_trabalhadas)
+				values(@nome_funcionario, @data, @horas_trabalhadas);
+		end
+		fetch next from cr_funcionarios
+			into @data, @nome_funcionario, @horas_trabalhadas;
+	end
+	close cr_funcionarios;
+	deallocate cr_funcionarios;
+	insert into AVS_AVISOS_FUNCIONARIOS(avs_nome_funcionario, avs_data_aviso, avs_horas_trabalhadas)
+		select nome_funcionario, data_evento, horas_trabalhadas from #horas_extras;
+		select @qtde_eventos = count(*) from AVS_AVISOS_FUNCIONARIOS;
+	set nocount off;
+end;
+
+select * from vw_ponto_funcionarios;
+
+declare @qtde_horas_extras int;
+begin try
+	exec spe_notificar_horas_extras '2023-01-04', @qtde_eventos = @qtde_horas_extras output;
+	select @qtde_horas_extras as quantidade_eventos;
+end try
+begin catch
+	print 'houve um erro ao realizar o procedimento';
+	print error_message();
+	print 'severidade: ';
+	print error_severity();
+	print 'estado: ';
+	print error_state();
+end catch;

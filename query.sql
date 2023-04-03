@@ -749,3 +749,31 @@ transação para que não existam problemas durante a execução. ACID é uma si
 o SQL Server dá 100% de suporte às propriedades ACID, com possibilidade de Auto Recovery que é a recuperação do
 banco de dados após uma falha e amparo com vários arquivos de log.
 */
+
+-- 12.1 usando comandos BEGIN TRAN, COMMIT e ROLLBACK
+create table LOG_LOGS
+(
+	log_id int identity(1,1) not null,
+	log_evento varchar(300)
+);
+
+declare @qtde_horas_extras int;
+begin transaction;
+begin try
+	insert into LOG_LOGS(log_evento) values('spe_notificar_horas_extras vai ser invocada');
+	exec spe_notificar_horas_extras '2023-01-04', @qtde_eventos = @qtde_horas_extras output;
+	select @qtde_horas_extras as quantidade_eventos;
+	insert into LOG_LOGS(log_evento) values('spe_notificar_horas_extras foi invocada');
+	commit;
+end try
+begin catch
+	rollback;
+	print 'houve um erro ao realizar o procedimento';
+	print error_message();
+	print 'severidade: ';
+	print error_severity();
+	print 'estado: ';
+	print error_state();
+end catch;
+
+select * from LOG_LOGS;

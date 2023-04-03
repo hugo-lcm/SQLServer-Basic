@@ -699,3 +699,53 @@ begin catch
 	print 'estado: ';
 	print error_state();
 end catch;
+
+-- 12 transações
+-- no T-SQL uma transação é definida dentro de um bloco declarado a partir do BEGIN TRANSACTION, conforme a sintaxe:
+BEGIN { TRAN | TRANSACTION }
+    [ transacao_nome
+      [ WITH MARK [ 'descricao' ] ]
+--instruções
+COMMIT [ transacao_nome]
+ROLLBACK [transacao_nome]
+
+/*
+na sintaxe acima, a transação/unidade lógica começa no comando BEGIN TRAN ou BEGIN TRANSACTION. O COMMIT é uma 
+operação de confirmação de que correu tudo bem e que todos os comandos que fazem parte da unidade lógica, ou da
+transação, foram executados com sucesso e o banco de dados encontra-se em um estado consistente. Já o ROLLBACK 
+retornará todos os comandos anteriores àquele onde houve um erro, ou seja: tudo será desfeito se houve um 
+problema com algum comando dentro de uma transação.
+
+COMMIT: indica o término de uma transação bem-sucedida. Ela informa ao gerenciador de transações que uma unidade
+lógica de trabalho foi concluída com sucesso, o banco de dados já está novamente em um estado consistente e todas
+as atualizações feitas por essa unidade de trabalho já podem se tornar permanentes.
+
+ROLLBACK: assinala o término de uma transação malsucedida. Ela informa ao gerenciador de transações que algo saiu
+errado, que o banco de dados pode estar em um estado inconsistente, e que todas as atualizações feitas pela unidade
+lógica de trabalho até agora devem ser desfeitas.
+
+as vantagens do uso de transações em um ambiente web, por exemplo, são inúmeras. As principais são:
+
+	não carregar com processamento no lado cliente;
+	ter uma estrutura modular;
+	evitar perda de informações, pois um usuário pode simplesmente fechar o browser e apagar todo o carrinho de compras;
+	diminuir o tráfego na rede já que se está trafegando parâmetros e os entregando ao banco de dados;
+	ter controle sobre os erros que possam acontecer com as lógicas de definição de fluxo de dados;
+	ter controle das atualizações de registros através de bloqueios.
+
+para usar essa engenharia toda deve-se, ainda, conhecer as propriedades ACID, que são atributos necessários à toda 
+transação para que não existam problemas durante a execução. ACID é uma sigla que significa:
+
+	atomicidade: toda transação deverá ser atômica – o verdadeiro "tudo ou nada";
+	consistência: as transações devem preservar a consistência do banco de dados, ou seja: transforma um estado 
+		consistente do banco de dados em outro estado consistente, sem necessariamente preservar o estado de 
+		consistência em todos os pontos intermediários;
+	isolamento: as transações são isoladas umas das outras, de acordo com o nível de isolamento definido no 
+		momento em que a transação se inicia, que no SQL Server são: REPEATABLE READ, READ COMMITED, 
+		READ UNCOMMITED e SERIALIZABLE;
+	durabilidade: uma vez comprometida a transação, suas atualizações sobrevivem no banco de dados mesmo que
+		haja uma queda subsequente do sistema.
+
+o SQL Server dá 100% de suporte às propriedades ACID, com possibilidade de Auto Recovery que é a recuperação do
+banco de dados após uma falha e amparo com vários arquivos de log.
+*/

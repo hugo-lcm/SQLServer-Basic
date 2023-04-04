@@ -816,3 +816,35 @@ INSERTED							INSERTED
 UPDATE 							INSERTED e DELETED
 
 DELETE 								DELETED*/
+
+-- 13.1 usando triggers
+create or alter trigger tgr_ponto_funcionario
+on PAC_PONTOS_ACESSO
+after insert, update
+as
+begin
+	declare @fun_id int;
+	select @fun_id = fun_id from inserted;
+	declare @nome_funcionario varchar(70);
+	select @nome_funcionario = concat(fun_sobrenome, ', ', fun_nome)
+		from FUN_FUNCIONARIOS;
+	declare @data_ponto_inicial date;
+	declare @data_ponto_final date;
+	select @data_ponto_inicial = pac_data_inicial,
+		   @data_ponto_final = pac_data_final
+		from inserted;
+	if @data_ponto_final is null
+	begin
+		insert into LOG_LOGS(log_evento)
+			values(@nome_funcionario + ' bateu o ponto em ' + format(@data_ponto_inicial, 'dd/MM/yyyy hh:mm'))
+	end
+	else
+	begin
+		insert into LOG_LOGS(log_evento) 
+			values(@nome_funcionario + ' bateu o ponto em ' + format(@data_ponto_final, 'dd/MM/yyyy hh:mm'))
+	end
+end;
+
+exec spe_registrar_ponto_acesso 1, '2023-04-27 07:00:00';
+exec spe_registrar_ponto_acesso 1, '2023-04-27 12:00:00';
+select * from LOG_LOGS;

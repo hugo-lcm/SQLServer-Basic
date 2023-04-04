@@ -777,3 +777,42 @@ begin catch
 end catch;
 
 select * from LOG_LOGS;
+
+-- 13 triggers
+/*os triggers permitem disparar uma série de comandos em um evento de manipulação de dados como INSERT,
+UPDATE ou DELETE. Eles são um conjunto de instruções T-SQL assim como os procedimentos e functions, porém
+seu principal diferencial é que são disparados em um evento definido e podem cancelar a execução de um comando.
+veja a sintaxe de criação de um trigger:*/
+CREATE TRIGGER nome_trigger on nome_tabela
+evento tipo_evento
+AS
+BEGIN
+
+   COMANDOS
+
+END
+
+/*o evento indica quando o trigger deve ser executado, que deve ser AFTER ou INSTEAD OF:
+	AFTER: neste modo, o Trigger será executado após os dados serem alterados no banco de dados;
+	INSTEAD OF: neste modo o Trigger é executado antes que as alterações sejam feitas no banco de dados.
+
+em seguida, temos que definir qual evento irá ativar o trigger. Este evento, pode ser INSERT, UPDATE ou DELETE.
+Sem esquecer de definir a qual tabela o trigger estará vinculado. Assim, quando, por exemplo, registros forem
+adicionados a tabela, um trigger de INSERT pode ser invocado.
+
+para termos acesso dentro do trigger aos dados que estão sendo inseridos, alterados, ou excluídos de uma tabela, 
+o SQL define tabelas temporárias com esses dados.´Por exemplo, durante a execução de um Trigger vinculado ao evento
+INSERT, temos acesso aos novos dados em uma tabela chamada INSERTED. Todos os dados que serão inseridos na tabela 
+vinculada ao Trigger, podem ser acessados por esta tabela. O mesmo ocorre com os dados que serão removidos, só que 
+eles estão disponíveis a partir da tabela DELETED. Essas tabelas só existem durante a execução do trigger e só podem 
+ser acessados por ele.
+
+para cada tipo de evento temos acesso à determinada tabela temporária. Veja abaixo:
+
+Tipo de evento 					Tabela temporária
+
+INSERTED							INSERTED
+
+UPDATE 							INSERTED e DELETED
+
+DELETE 								DELETED*/
